@@ -1,4 +1,4 @@
-# AircraftsOverCzechRepublic
+# Aircrafts Over Czech Republic
 
 ## Demo
 ![demo](demo/demo.gif)
