@@ -1,6 +1,5 @@
 package com.tek.aircraftsoverczechrepublic.data.remote.dta
 
-import android.util.Log
 import com.tek.aircraftsoverczechrepublic.domain.model.Aircraft
 
 data class AllStatesDto(
@@ -13,6 +12,7 @@ fun AllStatesDto.toAircraft(): List<Aircraft> {
     this.states.forEach {
         tmp.add(
             Aircraft(
+                uniqueId=it[0],
                 code = it[1],
                 country = it[2],
                 long = it[5],

@@ -17,7 +17,7 @@ class MapViewModel(private val aircraftUseCase: GetAircraftUseCase) : ViewModel(
     private val _state = mutableStateOf(AircraftListState())
     val state: State<AircraftListState> = _state
 
-   val selectedMarker= mutableStateOf(Aircraft("", "", "", "", "", "", ""))
+   val selectedMarker= mutableStateOf(Aircraft("", "", "", "", "", "", "",""))
 
 
     init {
@@ -35,7 +35,7 @@ class MapViewModel(private val aircraftUseCase: GetAircraftUseCase) : ViewModel(
                 selectedMarker.value = event.marker
             }
             is MapEvent.OnMapClicked->{
-                selectedMarker.value = Aircraft("", "", "", "", "", "", "")
+                selectedMarker.value = Aircraft("", "", "", "", "", "", "","")
             }
         }
     }
@@ -53,7 +53,7 @@ class MapViewModel(private val aircraftUseCase: GetAircraftUseCase) : ViewModel(
                 }
                 is Resource.Loading -> {
                     _state.value = AircraftListState(isLoading = true)
-                    selectedMarker.value = Aircraft("", "", "", "", "", "", "")
+                    selectedMarker.value = Aircraft("", "", "", "", "", "", "","")
                 }
             }
         }.launchIn(viewModelScope)

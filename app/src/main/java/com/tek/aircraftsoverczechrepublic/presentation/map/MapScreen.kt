@@ -90,7 +90,7 @@ fun MapScreen() {
                         ),
                         icon = LocalContext.current.vectorToBitmap(
                             R.drawable.ic_aircraft,
-                            if (aircraft.code == viewModel.selectedMarker.value.code) Color.parseColor(
+                            if (aircraft.uniqueId == viewModel.selectedMarker.value.uniqueId) Color.parseColor(
                                 "#ff9500"
                             ) else Color.parseColor("#000000")
                         ),
