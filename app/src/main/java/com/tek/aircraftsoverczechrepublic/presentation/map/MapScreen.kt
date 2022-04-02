@@ -52,7 +52,7 @@ fun MapScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(text = viewModel.selectedMarker.value.code)
+                    Text(text = viewModel.selectedMarker.value.code ?: "N/A")
                     Text(text = viewModel.selectedMarker.value.country)
                     Text(text = "Velocity is ${viewModel.selectedMarker.value.velocity} m/s")
                     Text(text = "Geometric altitude is  ${if (viewModel.selectedMarker.value.geo_altitude != null) viewModel.selectedMarker.value.geo_altitude + " meters" else "N/A"} ")
