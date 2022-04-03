@@ -1,7 +1,7 @@
 # Aircrafts Over Czech Republic
 
 ## Demo
-![demo](demo/demo.gif)
+![demo](demo/polygon_demo.gif)
 
 ### Used Technologies
 - Compose
