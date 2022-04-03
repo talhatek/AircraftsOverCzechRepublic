@@ -30,9 +30,8 @@ fun MapScreen() {
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
     val scope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(prague, 8f)
+        position = CameraPosition.fromLatLngZoom(prague, 6f)
     }
-
     BottomSheetScaffold(
         sheetContent = {
             Box(
@@ -80,6 +79,11 @@ fun MapScreen() {
                     }
                 }
             ) {
+                Polygon(
+                    points = viewModel.polygonPoints.value,
+                    fillColor = androidx.compose.ui.graphics.Color(0x59caf0f8),
+                    strokeWidth = 1f
+                )
                 state.aircraftList.forEach { aircraft ->
                     Marker(
                         state = rememberMarkerState(
