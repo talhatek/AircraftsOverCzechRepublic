@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ fun MapScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
+                    .testTag("BottomSheetBox")
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
@@ -64,7 +66,7 @@ fun MapScreen() {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             GoogleMap(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().testTag("map"),
                 cameraPositionState = cameraPositionState,
                 properties = MapProperties(mapStyleOptions = MapStyleOptions(MapStyle.json)),
                 uiSettings = MapUiSettings(
@@ -74,23 +76,24 @@ fun MapScreen() {
                 onMapClick = {
                     viewModel.onEvent(MapEvent.OnMapClicked)
                     scope.launch {
-                        if (bottomSheetScaffoldState.bottomSheetState.isExpanded)
+                        if (bottomSheetScaffoldState.bottomSheetState.isExpanded){
                             bottomSheetScaffoldState.bottomSheetState.collapse()
+                        }
                     }
                 }
             ) {
                 Polygon(
                     points = viewModel.polygonPoints.value,
                     fillColor = androidx.compose.ui.graphics.Color(0x59caf0f8),
-                    strokeWidth = 1f
+                    strokeWidth = 1f,
+                    tag = "cz"
                 )
                 state.aircraftList.forEach { aircraft ->
                     Marker(
-                        state = rememberMarkerState(
-                            position = LatLng(
-                                aircraft.lat.toDouble(),
-                                aircraft.long.toDouble()
-                            )
+                        title = aircraft.uniqueId,
+                        position = LatLng(
+                            aircraft.lat.toDouble(),
+                            aircraft.long.toDouble()
                         ),
                         icon = LocalContext.current.vectorToBitmap(
                             R.drawable.ic_aircraft,

@@ -13,7 +13,7 @@ fun AllStatesDto.toAircraft(): List<Aircraft> {
         tmp.add(
             Aircraft(
                 uniqueId=it[0],
-                code = it[1].trim(),
+                code = it[1].trim() ,
                 country = it[2],
                 long = it[5],
                 lat = it[6],
