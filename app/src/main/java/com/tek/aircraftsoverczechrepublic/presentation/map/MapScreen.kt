@@ -125,6 +125,7 @@ fun MapScreen() {
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxWidth(.9f)
+                        .testTag("errorCard")
                 ) {
                     Text(
                         text = state.error,
