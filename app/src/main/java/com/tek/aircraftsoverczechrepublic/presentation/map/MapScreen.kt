@@ -26,6 +26,7 @@ import org.koin.androidx.compose.get
 fun MapScreen() {
     val viewModel = get<MapViewModel>()
     val state = viewModel.state.value
+    val selectedMarkerState = viewModel.selectedMarkerState.collectAsState()
     val prague = LatLng(50.073658, 14.418540)
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
@@ -53,10 +54,34 @@ fun MapScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(text = viewModel.selectedMarker.value.code ?: "N/A")
-                    Text(text = viewModel.selectedMarker.value.country)
-                    Text(text = "Velocity is ${viewModel.selectedMarker.value.velocity} m/s")
-                    Text(text = "Geometric altitude is  ${if (viewModel.selectedMarker.value.geo_altitude != null) viewModel.selectedMarker.value.geo_altitude + " meters" else "N/A"} ")
+                    Text(
+                        text = if (selectedMarkerState.value is SelectedMarkerState.Selected) {
+                            (selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.code
+                                ?: "N/A"
+                        } else "N/A"
+                    )
+                    Text(
+                        text = if (selectedMarkerState.value is SelectedMarkerState.Selected) {
+                            (selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.country
+                        } else "N/A"
+                    )
+                    Text(
+                        text = if (selectedMarkerState.value is SelectedMarkerState.Selected) {
+                            "Velocity is ${(selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.velocity} m/s"
+                        } else
+                            "N/A"
+                    )
+                    Text(
+                        text = if (selectedMarkerState.value is SelectedMarkerState.Selected) {
+                            "Geometric altitude is  ${
+                                if ((selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.geo_altitude != null)
+                                    (selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.geo_altitude + " meters" else "N/A"
+                            } "
+
+                        } else {
+                            "N/A"
+                        }
+                    )
                 }
             }
         },
@@ -66,7 +91,9 @@ fun MapScreen() {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             GoogleMap(
-                modifier = Modifier.fillMaxSize().testTag("map"),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("map"),
                 cameraPositionState = cameraPositionState,
                 properties = MapProperties(mapStyleOptions = MapStyleOptions(MapStyle.json)),
                 uiSettings = MapUiSettings(
@@ -76,7 +103,7 @@ fun MapScreen() {
                 onMapClick = {
                     viewModel.onEvent(MapEvent.OnMapClicked)
                     scope.launch {
-                        if (bottomSheetScaffoldState.bottomSheetState.isExpanded){
+                        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
                             bottomSheetScaffoldState.bottomSheetState.collapse()
                         }
                     }
@@ -95,16 +122,31 @@ fun MapScreen() {
                             aircraft.lat.toDouble(),
                             aircraft.long.toDouble()
                         ),
-                        icon = LocalContext.current.vectorToBitmap(
-                            R.drawable.ic_aircraft,
-                            if (aircraft.uniqueId == viewModel.selectedMarker.value.uniqueId) Color.parseColor(
-                                "#ff9500"
-                            ) else Color.parseColor("#000000")
-                        ),
+                        icon =
+                        when (selectedMarkerState.value) {
+                            is SelectedMarkerState.Selected -> {
+                                if ((selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.uniqueId == aircraft.uniqueId)
+                                    LocalContext.current.vectorToBitmap(
+                                        R.drawable.ic_aircraft, Color.parseColor("#ff9500")
+                                    )
+                                else {
+                                    LocalContext.current.vectorToBitmap(
+                                        R.drawable.ic_aircraft, Color.parseColor("#000000")
+                                    )
+                                }
+                            }
+                            else -> {
+                                LocalContext.current.vectorToBitmap(
+                                    R.drawable.ic_aircraft, Color.parseColor("#000000")
+                                )
+                            }
+                        },
+
                         rotation = aircraft.truck.toFloat(),
                         onClick = {
-                            if (aircraft.code == viewModel.selectedMarker.value.code)
+                            if (selectedMarkerState.value is SelectedMarkerState.Selected && (selectedMarkerState.value as SelectedMarkerState.Selected).aircraft.uniqueId == aircraft.uniqueId) {
                                 return@Marker true
+                            }
                             scope.launch {
                                 if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
                                     bottomSheetScaffoldState.bottomSheetState.collapse()
